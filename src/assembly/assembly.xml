@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+The MIT License
+
+Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
+
+Данная лицензия разрешает, безвозмездно, лицам, получившим копию данного программного 
+обеспечения и сопутствующей документации (в дальнейшем именуемыми "Программное Обеспечение"), 
+использовать Программное Обеспечение без ограничений, включая неограниченное право на 
+использование, копирование, изменение, объединение, публикацию, распространение, сублицензирование 
+и/или продажу копий Программного Обеспечения, также как и лицам, которым предоставляется 
+данное Программное Обеспечение, при соблюдении следующих условий:
+
+Вышеупомянутый копирайт и данные условия должны быть включены во все копии 
+или значимые части данного Программного Обеспечения.
+
+ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ ЛЮБОГО ВИДА ГАРАНТИЙ, 
+ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, 
+СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И НЕНАРУШЕНИЯ ПРАВ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ 
+ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ 
+ИЛИ ДРУГИХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩИМ КОНТРАКТАМ, ДЕЛИКТАМ ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ 
+ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ 
+ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
+-->
+<assembly>
+    <id>bin</id>
+    
+    <!-- Формат -->
+    <formats>
+        <format>zip</format>
+    </formats>
+    
+    <!-- зависимости -->
+    <dependencySets>
+        <dependencySet>
+            <!--
+                Project artifact is not copied under library directory since
+                it is added to the root directory of the zip package.
+            -->
+            <useProjectArtifact>false</useProjectArtifact>
+            <outputDirectory>jar/dependency</outputDirectory>
+            <unpack>false</unpack>
+        </dependencySet>
+    </dependencySets>
+    
+    <fileSets>
+    	<!-- 
+        <fileSet>
+            <directory>src/main/assembly/scripts</directory>
+            <outputDirectory>bin</outputDirectory>
+            <includes>
+                <include>lang2</include>
+            </includes>
+            <fileMode>0755</fileMode>
+        </fileSet>
+         -->
+        
+        <!-- скопилированный jar -->
+        <fileSet>
+            <directory>${project.build.directory}</directory>
+            <outputDirectory>jar</outputDirectory>
+            <includes>
+                <include>*.jar</include>
+            </includes>
+        </fileSet>
+        
+        <!-- Документация -->
+        <fileSet>
+            <directory>src/doc</directory>
+            <outputDirectory>doc</outputDirectory>
+            <includes>
+                <include>*.pdf</include>
+                <include>*.g</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
