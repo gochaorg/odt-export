@@ -78,6 +78,29 @@ object Export
 		defValue
 	}
 	
+	lazy val showHelp : Boolean = {
+		import scala.util.control.Breaks._
+		var res = false;
+		breakable {
+			if(    argument("help", "n").equalsIgnoreCase("y")
+				|| argument("help", "n").equalsIgnoreCase("yes")
+				|| argument("help", "n").equalsIgnoreCase("true")
+			) {
+				res = true
+				break 
+			}
+			if( commandLineArguments != null ){
+				for( cmdArg <- commandLineArguments ){
+					if( cmdArg.equalsIgnoreCase("--help") ){
+						res = true
+						break
+					}
+				}
+			}
+		}
+		res
+	}
+	
 	/**
 	 * Входной ODT файл
 	 */
@@ -108,7 +131,7 @@ object Export
 		/**
 		 * Дата сборки
 		 */
-		lazy val buildDate : String = if( info("build.time")==null ) "no build info" else info("build.date");
+		lazy val buildDate : String = if( info("build.date")==null ) "no build info" else info("build.date");
 
 		/**
 		 * Название проекта
@@ -137,6 +160,11 @@ object Export
 	object message {
 		private lazy val messages = new ResourceLocalMessages("/xyz/cofe/odtexport/odt/messages.properties").messages;
 		private def template(tpl:String,any:AnyRef*):String = xyz.cofe.text.Text.template(tpl,any:_*);
+		private def template(tpl:String,vars:Map[String,String]):String = {
+			val m = new java.util.HashMap[String,String]();
+			vars.foreach { case(k,v) => { m.put(k, v) } };
+			xyz.cofe.text.Text.template(tpl,m);
+		}
 
 		object error {
 			object args {
@@ -154,8 +182,20 @@ object Export
 			lazy val end : String = messages("export.end");
 			def fileCreated(file:File):String = template(messages("export.fileCreated"),file);
 			lazy val currentLang:String = template(messages("export.currentLang"),java.util.Locale.getDefault.getLanguage)
-			lazy val help:String = template(messages("export.help"),buildInfo.version)
-			lazy val hello:String = template(messages("export.hello"),buildInfo.version)
+			
+			private lazy val helpVars = Map( 
+						"version" -> buildInfo.version,
+						"project.name" -> buildInfo.projectName,
+						"project.url" -> buildInfo.projectUrl,
+						"project.email" -> buildInfo.projectEmail,
+						"project.author" -> buildInfo.projectAuthor,
+						"build.date" -> buildInfo.buildDate 
+					)
+			
+			lazy val help:String = {
+				template(messages("export.help"),helpVars)
+			}
+			lazy val hello:String = template(messages("export.hello"),helpVars)
 		}
 	}
 
@@ -165,6 +205,15 @@ object Export
 	def main(args:Array[String]):Unit = {
 		commandLineArguments = args;
 		
+		if( verbose ){
+			println( message.export.hello );
+			println( message.export.currentLang );
+		}
+		
+		if( showHelp ){
+			help();
+		}
+
 		if( inputODTFile==null ){
 //			println( "Не указан ODT файл" );
 			println( message.error.args.notSetInput );
@@ -215,7 +264,7 @@ object Export
 	 * Выводить сообщения о процессе
 	 */
 	lazy val verbose : Boolean = {
-		val v = argument("verbose","true");
+		val v = argument("verbose","false");
 		v.equalsIgnoreCase("true") || v.equalsIgnoreCase("on") || v.equals("1")
 	}
 	
@@ -240,8 +289,6 @@ object Export
 		import xyz.cofe.odtexport.File._;
 
 		if( verbose ){
-			println( message.export.hello );
-			println( message.export.currentLang );
 			println( message.export.begin(odt,html) );
 		}
 
