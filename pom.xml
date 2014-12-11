@@ -4,24 +4,33 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 
 	<groupId>xyz.cofe</groupId>
 	<artifactId>odtexport</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.2.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>odtexport</name>
+	<name>odtExport</name>
 
+	<!-- Свойства -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.url>https://github.com/gochaorg/odt-export</project.url>
+		<project.email>nt.gocha@gmail.com</project.email>
+		<project.author>Kamnev Georgiy</project.author>
+	</properties>
+
+	<!-- Подключение репозиториев -->
 	<repositories>
+		<!-- Подключение репозитория scala -->
 		<repository>
 			<id>scala-tools.org</id>
 			<name>Scala-tools Maven2 Repository</name>
 			<url>http://scala-tools.org/repo-releases</url>
 		</repository>
-		<!--
+		
+        <!-- Подключение dropbox в качестве хранилища сборок -->
 		<repository>
-			<id>local</id>
-			<name>Local repo</name>
-			<url>file:///home/user/.m2</url>
+			<id>dropbox</id>
+			<url>https://dl.dropboxusercontent.com/u/21708112/maven-repo</url>
 		</repository>
-		-->
 	</repositories>
 	
 	<pluginRepositories>
@@ -31,10 +40,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<url>http://scala-tools.org/repo-releases</url>
 		</pluginRepository>
 	</pluginRepositories>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<dependencies>
 		<!-- библиотека scala -->
@@ -66,17 +71,23 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<version>1.0.6</version>
 		</dependency>
 		 -->
+		 
+		<!-- Собственная либа -->
 		<dependency>
 			<groupId>xyz.cofe</groupId>
 			<artifactId>java-common</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.2</version>
 		</dependency>
+		
+		<!-- Сборка проекта / генерация shell скриптов -->
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>appassembler-maven-plugin</artifactId>
             <version>1.8</version>
             <scope>provided</scope>
         </dependency>
+
+		<!-- генерация build номеров -->        
         <dependency>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>buildnumber-maven-plugin</artifactId>
@@ -121,6 +132,32 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				</configuration>
 			</plugin>
 			
+			<!-- Генерация файла с информацией о сборке -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>1.6</version>
+                <executions>
+                	<execution>
+                		<phase>compile</phase>
+                		<goals>
+                			<goal>run</goal>
+                		</goals>
+                		<configuration>
+                			<target>
+                                <tstamp>
+                                    <format
+                                        property="build.date"
+                                        pattern="yyyy-MM-dd"
+                                    />
+                                </tstamp>
+                                <property name="buildDate" value="${TODAY}" />
+                                <echoproperties destfile="${basedir}/target/classes/xyz/cofe/odtexport/build.properties" />
+                			</target>
+                		</configuration>
+                	</execution>
+                </executions>
+            </plugin>
+			
 			<!-- Генерация shell скриптов -->
 			<plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -143,6 +180,34 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
                     </programs>
                 </configuration>
             </plugin>
+
+            <!-- Версионность -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <preparationGoals>clean install</preparationGoals>
+                    <goals>deploy</goals>
+                    <autoVersionSubmodules>true</autoVersionSubmodules>
+                </configuration>
+            </plugin>
+            
+            <!-- Сборка в zip пакет -->
+            <plugin>
+			    <artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+						<configuration>
+							<descriptor>src/assembly/assembly.xml</descriptor>
+						</configuration>
+					</execution>
+				</executions>
+            </plugin>
 		<!--
 		<plugin>
 		<groupId>org.apache.maven.plugins</groupId>
@@ -155,5 +220,40 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		</plugin>
 		-->
 		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.apache.maven.plugins
+										</groupId>
+										<artifactId>
+											maven-antrun-plugin
+										</artifactId>
+										<versionRange>
+											[1.6,)
+										</versionRange>
+										<goals>
+											<goal>run</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

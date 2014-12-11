@@ -31,17 +31,21 @@ Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
     </formats>
     
     <!-- зависимости -->
+    <!-- 
     <dependencySets>
         <dependencySet>
+        	-->
             <!--
                 Project artifact is not copied under library directory since
                 it is added to the root directory of the zip package.
             -->
+            <!-- 
             <useProjectArtifact>false</useProjectArtifact>
             <outputDirectory>jar/dependency</outputDirectory>
             <unpack>false</unpack>
         </dependencySet>
     </dependencySets>
+     -->
     
     <fileSets>
     	<!-- 
@@ -56,6 +60,7 @@ Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
          -->
         
         <!-- скопилированный jar -->
+        <!-- 
         <fileSet>
             <directory>${project.build.directory}</directory>
             <outputDirectory>jar</outputDirectory>
@@ -63,6 +68,7 @@ Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
                 <include>*.jar</include>
             </includes>
         </fileSet>
+         -->
         
         <!-- Документация -->
         <fileSet>
@@ -72,6 +78,27 @@ Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
                 <include>*.pdf</include>
                 <include>*.g</include>
             </includes>
+        </fileSet>
+        
+        <fileSet>
+        	<directory>target/appassembler/repo</directory>
+        	<outputDirectory>repo</outputDirectory>
+        	<!-- 
+        	<excludes>
+        		<exclude>src/assembly/maven-metadata-appassembler.xml</exclude>
+      		</excludes>
+      		 -->
+        </fileSet>
+
+        <fileSet>
+        	<directory>target/appassembler/bin</directory>
+        	<outputDirectory>bin</outputDirectory>
+        	<fileMode>0755</fileMode>
+        	<!-- 
+        	<excludes>
+        		<exclude>src/assembly/maven-metadata-appassembler.xml</exclude>
+      		</excludes>
+      		 -->
         </fileSet>
     </fileSets>
 </assembly>
