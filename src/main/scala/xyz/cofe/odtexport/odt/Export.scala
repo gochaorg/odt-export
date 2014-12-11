@@ -1,3 +1,27 @@
+/* 
+ * The MIT License
+ *
+ * Copyright 2014 Kamnev Georgiy (nt.gocha@gmail.com).
+ *
+ * Данная лицензия разрешает, безвозмездно, лицам, получившим копию данного программного 
+ * обеспечения и сопутствующей документации (в дальнейшем именуемыми "Программное Обеспечение"), 
+ * использовать Программное Обеспечение без ограничений, включая неограниченное право на 
+ * использование, копирование, изменение, объединение, публикацию, распространение, сублицензирование 
+ * и/или продажу копий Программного Обеспечения, также как и лицам, которым предоставляется 
+ * данное Программное Обеспечение, при соблюдении следующих условий:
+ *
+ * Вышеупомянутый копирайт и данные условия должны быть включены во все копии 
+ * или значимые части данного Программного Обеспечения.
+ *
+ * ДАННОЕ ПРОГРАММНОЕ ОБЕСПЕЧЕНИЕ ПРЕДОСТАВЛЯЕТСЯ «КАК ЕСТЬ», БЕЗ ЛЮБОГО ВИДА ГАРАНТИЙ, 
+ * ЯВНО ВЫРАЖЕННЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ, ВКЛЮЧАЯ, НО НЕ ОГРАНИЧИВАЯСЬ ГАРАНТИЯМИ ТОВАРНОЙ ПРИГОДНОСТИ, 
+ * СООТВЕТСТВИЯ ПО ЕГО КОНКРЕТНОМУ НАЗНАЧЕНИЮ И НЕНАРУШЕНИЯ ПРАВ. НИ В КАКОМ СЛУЧАЕ АВТОРЫ 
+ * ИЛИ ПРАВООБЛАДАТЕЛИ НЕ НЕСУТ ОТВЕТСТВЕННОСТИ ПО ИСКАМ О ВОЗМЕЩЕНИИ УЩЕРБА, УБЫТКОВ 
+ * ИЛИ ДРУГИХ ТРЕБОВАНИЙ ПО ДЕЙСТВУЮЩИМ КОНТРАКТАМ, ДЕЛИКТАМ ИЛИ ИНОМУ, ВОЗНИКШИМ ИЗ, ИМЕЮЩИМ 
+ * ПРИЧИНОЙ ИЛИ СВЯЗАННЫМ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ ИЛИ ИСПОЛЬЗОВАНИЕМ ПРОГРАММНОГО ОБЕСПЕЧЕНИЯ 
+ * ИЛИ ИНЫМИ ДЕЙСТВИЯМИ С ПРОГРАММНЫМ ОБЕСПЕЧЕНИЕМ.
+ */
+
 package xyz.cofe.odtexport.odt
 
 //TODO Написание справки
@@ -71,16 +95,40 @@ object Export
 	}
 
 	/**
-	 * Версия ПО
+	 * Информация о сборке
 	 */
-	lazy val version : String = {
-//		val packages = java.lang.Package.getPackages;
-//		for( pack <- packages )
-//			println( "package name: \""+pack.getName+"\" impl. ver: \""+pack.getImplementationVersion+"\"" );
-		val defVer = "devBuild";
-		val pkg = java.lang.Package.getPackage("xyz.cofe.odtexport");
-		val pkgImplVer = if( pkg!=null )pkg.getImplementationVersion() else null;
-		if( pkgImplVer!=null ) pkgImplVer else defVer
+	object buildInfo {
+		private lazy val info = new ResourceLocalMessages("/xyz/cofe/odtexport/build.properties").messages;
+		
+		/**
+		 * Версия ПО
+		 */
+		lazy val version : String = if( info("project.version")==null ) "no build info" else info("project.version");
+		
+		/**
+		 * Дата сборки
+		 */
+		lazy val buildDate : String = if( info("build.time")==null ) "no build info" else info("build.date");
+
+		/**
+		 * Название проекта
+		 */
+		lazy val projectName : String = if( info("project.name")==null ) "no build info" else info("project.name");
+
+		/**
+		 * Название проекта
+		 */
+		lazy val projectUrl : String = if( info("project.url")==null ) "no build info" else info("project.url");
+
+		/**
+		 * Название проекта
+		 */
+		lazy val projectEmail : String = if( info("project.email")==null ) "no build info" else info("project.email");
+
+		/**
+		 * Название проекта
+		 */
+		lazy val projectAuthor : String = if( info("project.author")==null ) "no build info" else info("project.author");
 	}
 
 	/**
@@ -106,8 +154,8 @@ object Export
 			lazy val end : String = messages("export.end");
 			def fileCreated(file:File):String = template(messages("export.fileCreated"),file);
 			lazy val currentLang:String = template(messages("export.currentLang"),java.util.Locale.getDefault.getLanguage)
-			lazy val help:String = template(messages("export.help"),version)
-			lazy val hello:String = template(messages("export.hello"),version)
+			lazy val help:String = template(messages("export.help"),buildInfo.version)
+			lazy val hello:String = template(messages("export.hello"),buildInfo.version)
 		}
 	}
 
@@ -158,10 +206,10 @@ object Export
 		exit(0);
 	}
 	
-	/**
-	 * Имя программы для справки
-	 */
-	private lazy val programmeName : String = argument("PROGRAMME_NAME","odtExport");
+//	/**
+//	 * Имя программы для справки
+//	 */
+//	private lazy val programmeName : String = argument("PROGRAMME_NAME","odtExport");
 	
 	/**
 	 * Выводить сообщения о процессе
